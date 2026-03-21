@@ -39,8 +39,10 @@ export default function NodeMap({ messages }) {
               <div style={{ color: '#0f172a', fontSize: '13px', lineHeight: '1.5' }}>
                 <strong>Node: {latest.node_id}</strong><br />
                 SPL: {spl.toFixed(1)} dB<br />
-                ACI: {latest.acoustics?.ACI?.toFixed(2)}<br />
-                NDSI: {latest.acoustics?.NDSI?.toFixed(3)}<br />
+                Species: {latest.biodiversity?.species_count ?? 0} detected<br />
+                {latest.biodiversity?.detections?.[0] && (
+                  <>Latest: 🐦 {latest.biodiversity.detections[0].species}<br /></>
+                )}
                 Last seen: {timeAgo(formatTimestamp(latest.consensus_timestamp))}
               </div>
             </Popup>

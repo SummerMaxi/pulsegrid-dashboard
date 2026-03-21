@@ -1,4 +1,4 @@
-import { Activity, MessageSquare, Volume2, Leaf, Loader2 } from 'lucide-react';
+import { Activity, MessageSquare, Volume2, Leaf, Bird, Loader2 } from 'lucide-react';
 import { useHederaMessages } from './hooks/useHederaMessages';
 import Header from './components/Header';
 import MetricCard from './components/MetricCard';
@@ -6,6 +6,7 @@ import NodeMap from './components/NodeMap';
 import LiveFeed from './components/LiveFeed';
 import AcousticChart from './components/AcousticChart';
 import TransactionList from './components/TransactionList';
+import BiodiversityPanel from './components/BiodiversityPanel';
 
 export default function App() {
   const { messages, loading, error, lastUpdated, refetch } = useHederaMessages();
@@ -36,6 +37,11 @@ export default function App() {
     ? (latest.acoustics?.NDSI ?? 0) - (prev.acoustics?.NDSI ?? 0)
     : null;
 
+  const uniqueSpecies = new Set();
+  messages.forEach((m) => {
+    m.biodiversity?.detections?.forEach((d) => uniqueSpecies.add(d.species));
+  });
+
   return (
     <div className="min-h-screen bg-[#0f172a]">
       <Header lastUpdated={lastUpdated} onRefresh={refetch} loading={loading} />
@@ -48,11 +54,12 @@ export default function App() {
 
       <main className="p-6 space-y-6 max-w-7xl mx-auto">
         {/* Metric Cards */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
           <MetricCard title="Nodes Online" value="1" icon={Activity} />
           <MetricCard title="Messages Today" value={messages.length} icon={MessageSquare} />
           <MetricCard title="Avg SPL" value={avgSpl.toFixed(1)} unit="dB" icon={Volume2} trend={splTrend} />
           <MetricCard title="Latest NDSI" value={latest?.acoustics?.NDSI?.toFixed(3) ?? '—'} icon={Leaf} trend={ndsiTrend} />
+          <MetricCard title="Species Detected" value={uniqueSpecies.size} icon={Bird} />
         </div>
 
         {/* Map + Live Feed */}
@@ -60,6 +67,9 @@ export default function App() {
           <NodeMap messages={messages} />
           <LiveFeed messages={messages} />
         </div>
+
+        {/* Bird Detections */}
+        <BiodiversityPanel messages={messages} />
 
         {/* Acoustic Chart */}
         <AcousticChart messages={messages} />

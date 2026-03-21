@@ -26,10 +26,13 @@ export default function LiveFeed({ messages }) {
                 </div>
                 <span className="text-[10px] text-slate-500">{timeAgo(date)}</span>
               </div>
-              <div className="flex items-center gap-3 text-xs text-slate-300">
+              <div className="flex items-center gap-3 text-xs text-slate-300 flex-wrap">
                 <span>SPL: <strong className="text-white">{msg.acoustics?.spl_dba?.toFixed(1)}</strong> dB</span>
                 <span>ACI: <strong className="text-white">{msg.acoustics?.ACI?.toFixed(1)}</strong></span>
                 <span>NDSI: <strong className="text-white">{msg.acoustics?.NDSI?.toFixed(3)}</strong></span>
+                {msg.biodiversity?.detections?.[0] && (
+                  <span className="text-green-400">🐦 {msg.biodiversity.detections[0].species}</span>
+                )}
                 <a
                   href={getHashscanTxLink(msg.consensus_timestamp)}
                   target="_blank"
