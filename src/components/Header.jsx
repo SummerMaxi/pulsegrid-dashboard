@@ -17,7 +17,7 @@ export default function Header({ lastUpdated, onRefresh, loading }) {
             <h1 className="text-lg font-bold text-[#2C2C24] tracking-tight" style={{ fontFamily: "'Fraunces', Georgia, serif" }}>
               PulseGrid
             </h1>
-            <p className="text-[10px] text-[#78786C] -mt-0.5 font-medium">Acoustic Monitoring</p>
+            <p className="text-[10px] text-[#78786C] -mt-0.5 font-medium">DMRV Bioacoustic Network</p>
           </div>
         </div>
 

@@ -17,11 +17,12 @@ export function reassembleAndDecode(rawMessages) {
       // Single (non-chunked) message
       const decoded = decodePayload(msg.message);
       if (decoded) {
-        singleMessages.push({
+        const normalized = normalizeMessage({
           ...decoded,
           sequence_number: msg.sequence_number,
           consensus_timestamp: msg.consensus_timestamp,
         });
+        singleMessages.push(normalized);
       }
     } else {
       // Chunked message — group by initial transaction ID
@@ -60,11 +61,12 @@ export function reassembleAndDecode(rawMessages) {
     group.parts.sort((a, b) => a.number - b.number);
     const decoded = decodeChunkedPayload(group.parts.map((p) => p.message));
     if (decoded) {
-      singleMessages.push({
+      const normalized = normalizeMessage({
         ...decoded,
         sequence_number: group.lastSeqNum,
         consensus_timestamp: group.lastTimestamp,
       });
+      singleMessages.push(normalized);
     }
   }
 
@@ -131,6 +133,70 @@ function decodePayload(base64Str) {
       return null;
     }
   }
+}
+
+/**
+ * Normalize a decoded message to a flat structure.
+ * Handles both old flat payloads and new W3C Verifiable Credential payloads.
+ */
+export function normalizeMessage(msg) {
+  // New VC format: data nested under credentialSubject
+  if (msg.credentialSubject) {
+    const cs = msg.credentialSubject;
+    const mo = cs.measured_outcomes || {};
+    const ai = mo.acoustic_indices || {};
+    const bio = mo.biodiversity || {};
+    const loc = cs.location || {};
+    const tc = msg.trustChain || {};
+    const es = cs.ecosystem_services || {};
+
+    return {
+      // Keep original VC fields for trust chain panel
+      _isVC: true,
+      _vc: msg,
+
+      // Flat fields for existing components
+      node_id: msg.issuer?.node_id || cs.id || 'PG-0001',
+      node_name: msg.issuer?.name || '',
+      timestamp: msg.issuanceDate,
+      gps: {
+        lat: loc.coordinates?.[1] ?? 13.0827,
+        lng: loc.coordinates?.[0] ?? 80.2707,
+        fixed: loc.gps_fixed ?? false,
+      },
+      acoustics: {
+        spl_dba: ai.spl_dba ?? 0,
+        ACI: ai.aci ?? 0,
+        NDSI: ai.ndsi ?? 0,
+        ADI: ai.adi ?? 0,
+      },
+      biodiversity: {
+        species_count: bio.species_count ?? 0,
+        window_minutes: bio.observation_window_minutes ?? 10,
+        detections: bio.detections ?? [],
+      },
+      // Trust chain info
+      trustChain: {
+        sequence: tc.sequence,
+        previousHash: tc.previousHash,
+      },
+      // Ecosystem services
+      ecosystem_services: es,
+      // Methodology
+      methodology: cs.methodology,
+      // Proof
+      proof: msg.proof,
+      // Issuer
+      issuer: msg.issuer,
+
+      // These get set by reassembleAndDecode
+      sequence_number: msg.sequence_number,
+      consensus_timestamp: msg.consensus_timestamp,
+    };
+  }
+
+  // Old flat format — pass through as-is
+  return { ...msg, _isVC: false };
 }
 
 // Keep for backward compat but primary path now uses reassembleAndDecode

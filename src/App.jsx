@@ -8,6 +8,7 @@ import AcousticChart from './components/AcousticChart';
 import TransactionList from './components/TransactionList';
 import BiodiversityPanel from './components/BiodiversityPanel';
 import SpeciesDashboard from './components/SpeciesDashboard';
+import TrustChainPanel from './components/TrustChainPanel';
 
 function BlobBg({ className, color }) {
   return (
@@ -83,7 +84,7 @@ export default function App() {
               Listen to the Earth
             </h2>
             <p className="text-[#78786C] mt-3 text-base max-w-lg mx-auto">
-              Real-time acoustic biodiversity monitoring from Chennai, verified on Hedera.
+              Decentralized bioacoustic DMRV from Chennai — Verifiable Credentials on Hedera.
             </p>
           </div>
 
@@ -108,6 +109,9 @@ export default function App() {
           {/* Species Catalogue */}
           <SpeciesDashboard messages={messages} />
 
+          {/* DMRV Trust Chain */}
+          <TrustChainPanel messages={messages} />
+
           {/* Acoustic Chart */}
           <AcousticChart messages={messages} />
 
@@ -123,7 +127,7 @@ export default function App() {
               </span>
             </div>
             <p className="text-xs text-[#78786C]">
-              Decentralized Acoustic Monitoring on Hedera · Apex Hackathon 2026
+              Decentralized Bioacoustic DMRV on Hedera · Apex Hackathon 2026
             </p>
           </footer>
         </main>
