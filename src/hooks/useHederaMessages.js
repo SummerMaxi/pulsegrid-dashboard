@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { TOPIC_ID, MIRROR_NODE, decodeMessage } from '../utils/hedera';
+import { TOPIC_ID, MIRROR_NODE, reassembleAndDecode } from '../utils/hedera';
 
 const POLL_INTERVAL = 15000;
 
@@ -11,15 +11,13 @@ export function useHederaMessages() {
 
   const fetchMessages = useCallback(async () => {
     try {
-      const url = `${MIRROR_NODE}/api/v1/topics/${TOPIC_ID}/messages?limit=50&order=desc`;
+      // Fetch more raw messages to account for chunks consuming multiple sequence numbers
+      const url = `${MIRROR_NODE}/api/v1/topics/${TOPIC_ID}/messages?limit=100&order=desc`;
       const res = await fetch(url);
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
 
-      const decoded = data.messages
-        .map(decodeMessage)
-        .filter(Boolean)
-        .sort((a, b) => b.sequence_number - a.sequence_number);
+      const decoded = reassembleAndDecode(data.messages);
 
       setMessages(decoded);
       setError(null);
