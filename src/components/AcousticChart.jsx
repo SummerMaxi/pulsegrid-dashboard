@@ -5,11 +5,11 @@ function CustomTooltip({ active, payload }) {
   if (!active || !payload?.length) return null;
   const data = payload[0]?.payload;
   return (
-    <div className="bg-[#1e293b] border border-slate-600 rounded-lg p-3 text-xs">
-      <p className="text-slate-300 mb-1">{data?.time}</p>
-      <p className="text-green-400">SPL: {data?.spl?.toFixed(1)} dB</p>
-      <p className="text-blue-400">ACI: {data?.aci?.toFixed(2)}</p>
-      <p className="text-[#8259EF]">NDSI: {data?.ndsi?.toFixed(3)}</p>
+    <div className="bg-[#FEFEFA] border border-[#DED8CF] rounded-2xl p-4 shadow-[0_10px_40px_-10px_rgba(193,140,93,0.2)]" style={{ fontFamily: "'Nunito', sans-serif" }}>
+      <p className="text-[#78786C] text-xs font-medium mb-1.5">{data?.time}</p>
+      <p className="text-[#5D7052] text-sm font-bold">SPL: {data?.spl?.toFixed(1)} dB</p>
+      <p className="text-[#C18C5D] text-sm font-bold">ACI: {data?.aci?.toFixed(2)}</p>
+      <p className="text-[#A85448] text-sm font-bold">NDSI: {data?.ndsi?.toFixed(3)}</p>
     </div>
   );
 }
@@ -31,23 +31,35 @@ export default function AcousticChart({ messages }) {
     });
 
   return (
-    <div className="bg-[#1e293b] rounded-xl border border-slate-700/50 p-4">
-      <h2 className="text-sm font-semibold text-white mb-4">Acoustic Trends</h2>
+    <div className="bg-[#FEFEFA] rounded-[2rem] border border-[#DED8CF]/50 shadow-[0_4px_20px_-2px_rgba(93,112,82,0.1)] p-6">
+      <h2 className="text-lg font-bold text-[#2C2C24] mb-1" style={{ fontFamily: "'Fraunces', Georgia, serif" }}>
+        Acoustic Trends
+      </h2>
+      <p className="text-xs text-[#78786C] mb-6">Sound pressure, complexity & biophony over time</p>
       <ResponsiveContainer width="100%" height={280}>
         <LineChart data={chartData}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
-          <XAxis dataKey="time" tick={{ fill: '#94a3b8', fontSize: 11 }} />
-          <YAxis tick={{ fill: '#94a3b8', fontSize: 11 }} />
+          <CartesianGrid strokeDasharray="4 4" stroke="#DED8CF" strokeOpacity={0.5} />
+          <XAxis
+            dataKey="time"
+            tick={{ fill: '#78786C', fontSize: 11, fontFamily: "'Nunito', sans-serif" }}
+            axisLine={{ stroke: '#DED8CF' }}
+            tickLine={false}
+          />
+          <YAxis
+            tick={{ fill: '#78786C', fontSize: 11, fontFamily: "'Nunito', sans-serif" }}
+            axisLine={{ stroke: '#DED8CF' }}
+            tickLine={false}
+          />
           <Tooltip content={<CustomTooltip />} />
           <Legend
             formatter={(value) => {
               const labels = { spl: 'SPL (dB)', aciScaled: 'ACI / 10', ndsiScaled: 'NDSI × 50' };
-              return <span style={{ color: '#94a3b8', fontSize: 12 }}>{labels[value] || value}</span>;
+              return <span style={{ color: '#78786C', fontSize: 12, fontFamily: "'Nunito', sans-serif", fontWeight: 600 }}>{labels[value] || value}</span>;
             }}
           />
-          <Line type="monotone" dataKey="spl" stroke="#22c55e" strokeWidth={2} dot={false} animationDuration={800} />
-          <Line type="monotone" dataKey="aciScaled" stroke="#3b82f6" strokeWidth={2} dot={false} animationDuration={800} />
-          <Line type="monotone" dataKey="ndsiScaled" stroke="#8259EF" strokeWidth={2} dot={false} animationDuration={800} />
+          <Line type="natural" dataKey="spl" stroke="#5D7052" strokeWidth={2.5} dot={false} animationDuration={1000} />
+          <Line type="natural" dataKey="aciScaled" stroke="#C18C5D" strokeWidth={2.5} dot={false} animationDuration={1000} />
+          <Line type="natural" dataKey="ndsiScaled" stroke="#A85448" strokeWidth={2.5} dot={false} animationDuration={1000} />
         </LineChart>
       </ResponsiveContainer>
     </div>
