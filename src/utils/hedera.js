@@ -56,11 +56,9 @@ export function reassembleAndDecode(rawMessages) {
     // Only process if we have all chunks
     if (group.parts.length !== group.total) continue;
 
-    // Sort by chunk number and concatenate base64 parts
+    // Sort by chunk number, decode each to bytes, concatenate, then parse
     group.parts.sort((a, b) => a.number - b.number);
-    const combined = group.parts.map((p) => p.message).join('');
-
-    const decoded = decodePayload(combined);
+    const decoded = decodeChunkedPayload(group.parts.map((p) => p.message));
     if (decoded) {
       singleMessages.push({
         ...decoded,
@@ -71,6 +69,39 @@ export function reassembleAndDecode(rawMessages) {
   }
 
   return singleMessages.sort((a, b) => b.sequence_number - a.sequence_number);
+}
+
+/**
+ * Decode chunked message by decoding each base64 chunk to bytes,
+ * concatenating, then parsing the combined string.
+ */
+function decodeChunkedPayload(base64Parts) {
+  try {
+    // Decode each chunk independently to avoid base64 padding issues
+    const byteArrays = base64Parts.map((b64) => {
+      const binary = atob(b64);
+      return Uint8Array.from(binary, (c) => c.charCodeAt(0));
+    });
+
+    // Concatenate all byte arrays
+    const totalLen = byteArrays.reduce((sum, arr) => sum + arr.length, 0);
+    const combined = new Uint8Array(totalLen);
+    let offset = 0;
+    for (const arr of byteArrays) {
+      combined.set(arr, offset);
+      offset += arr.length;
+    }
+
+    // Decode bytes to string and parse
+    const raw = new TextDecoder().decode(combined);
+    let parsed = JSON.parse(raw);
+    if (typeof parsed === 'string') {
+      parsed = JSON.parse(parsed);
+    }
+    return parsed;
+  } catch {
+    return null;
+  }
 }
 
 /**
