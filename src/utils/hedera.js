@@ -4,7 +4,11 @@ export const HASHSCAN_BASE = "https://hashscan.io/testnet";
 
 export function decodeMessage(msg) {
   try {
-    const decoded = JSON.parse(atob(msg.message));
+    let decoded = JSON.parse(atob(msg.message));
+    // Handle double-encoded messages (string inside JSON)
+    if (typeof decoded === 'string') {
+      decoded = JSON.parse(decoded);
+    }
     return {
       ...decoded,
       sequence_number: msg.sequence_number,
