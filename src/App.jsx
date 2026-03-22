@@ -84,7 +84,7 @@ export default function App() {
               Listen to the Earth
             </h2>
             <p className="text-[#78786C] mt-3 text-base max-w-lg mx-auto">
-              Decentralized bioacoustic DMRV from Chennai — Verifiable Credentials on Hedera.
+              A decentralized network of bioacoustic DMRV nodes — anyone can deploy, monitor biodiversity, and publish Verifiable Credentials to Hedera.
             </p>
           </div>
 
