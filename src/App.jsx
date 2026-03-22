@@ -7,6 +7,7 @@ import LiveFeed from './components/LiveFeed';
 import AcousticChart from './components/AcousticChart';
 import TransactionList from './components/TransactionList';
 import BiodiversityPanel from './components/BiodiversityPanel';
+import SpeciesDashboard from './components/SpeciesDashboard';
 
 function BlobBg({ className, color }) {
   return (
@@ -103,6 +104,9 @@ export default function App() {
 
           {/* Bird Detections */}
           <BiodiversityPanel messages={messages} />
+
+          {/* Species Catalogue */}
+          <SpeciesDashboard messages={messages} />
 
           {/* Acoustic Chart */}
           <AcousticChart messages={messages} />
