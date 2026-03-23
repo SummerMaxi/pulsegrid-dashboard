@@ -1,4 +1,5 @@
-import { Activity, MessageSquare, Volume2, Leaf, Bird, Loader2 } from 'lucide-react';
+import { useState } from 'react';
+import { Activity, MessageSquare, Volume2, Leaf, Bird, Loader2, BookOpen } from 'lucide-react';
 import { useHederaMessages } from './hooks/useHederaMessages';
 import Header from './components/Header';
 import MetricCard from './components/MetricCard';
@@ -9,6 +10,7 @@ import TransactionList from './components/TransactionList';
 import BiodiversityPanel from './components/BiodiversityPanel';
 import SpeciesDashboard from './components/SpeciesDashboard';
 import TrustChainPanel from './components/TrustChainPanel';
+import GlossaryPage from './components/GlossaryPage';
 
 function BlobBg({ className, color }) {
   return (
@@ -26,6 +28,11 @@ function BlobBg({ className, color }) {
 
 export default function App() {
   const { messages, loading, error, lastUpdated, refetch } = useHederaMessages();
+  const [page, setPage] = useState('dashboard');
+
+  if (page === 'glossary') {
+    return <GlossaryPage onBack={() => setPage('dashboard')} />;
+  }
 
   if (loading && messages.length === 0) {
     return (
@@ -120,15 +127,22 @@ export default function App() {
 
           {/* Footer */}
           <footer className="text-center py-10">
-            <div className="flex items-center justify-center gap-2 mb-2">
+            <div className="flex items-center justify-center gap-2 mb-3">
               <span className="text-lg">🐝</span>
               <span className="text-sm font-bold text-[#2C2C24]" style={{ fontFamily: "'Fraunces', Georgia, serif" }}>
                 PulseGrid
               </span>
             </div>
-            <p className="text-xs text-[#78786C]">
+            <p className="text-xs text-[#78786C] mb-4">
               Decentralized Bioacoustic DMRV on Hedera · Apex Hackathon 2026
             </p>
+            <button
+              onClick={() => { setPage('glossary'); window.scrollTo(0, 0); }}
+              className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-bold rounded-full border-2 border-[#5D7052] text-[#5D7052] hover:bg-[#5D7052] hover:text-white transition-all duration-300"
+            >
+              <BookOpen size={16} />
+              Glossary of Terms
+            </button>
           </footer>
         </main>
       </div>
