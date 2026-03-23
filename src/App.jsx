@@ -88,10 +88,10 @@ export default function App() {
           {/* Hero tagline */}
           <div className="text-center py-6">
             <h2 className="text-4xl md:text-5xl font-bold text-[#2C2C24] tracking-tight" style={{ fontFamily: "'Fraunces', Georgia, serif" }}>
-              Listen to the Earth
+              Hear What the Planet Is Saying
             </h2>
-            <p className="text-[#78786C] mt-3 text-base max-w-lg mx-auto">
-              A decentralized network of bioacoustic DMRV nodes — anyone can deploy, monitor biodiversity, and publish Verifiable Credentials to Hedera.
+            <p className="text-[#78786C] mt-3 text-base max-w-2xl mx-auto">
+              PulseGrid is a decentralized network of AI powered acoustic sensors that you can deploy anywhere to monitor biodiversity in real time and publish tamper proof, verifiable data to Hedera.
             </p>
           </div>
 
